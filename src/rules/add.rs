@@ -1,12 +1,42 @@
 use crate::rulebook::RuleBook::Encryptor;
 
+use rand::Rng;
+
+pub static id: usize = 0;
+
+/// Generates the options for the Add rule
+/// 
+/// # Arguments
+/// 
+/// * `alphabet` - A vector of strings for the alphabet
+pub fn generate_options(alphabet: &Vec<String>) -> (String, usize, usize) {
+  let rl = rand::thread_rng().gen_range(0, alphabet.len());
+  let la = rand::thread_rng().gen_range(0, 10);
+  let js = rand::thread_rng().gen_range(0, 10);
+
+  return (alphabet[rl].clone(), la, js);
+}
+
+/// Generates a new boxed Add rule with options
+/// 
+/// # Arguments
+/// 
+/// * `alphabet` - A vector of strings for the alphabet
+pub fn new(alphabet: &Vec<String>) -> Box<Add> {
+  return Box::new(Add {
+      options: generate_options(alphabet)
+  });
+}
+
 pub struct Add {
-  /**
-   * String: Letter to add,
-   * usize: Amount of letters to add,
-   * usize: Jump size
-   */
-  pub options: (String, usize, usize)
+  /// Options for the Add Rule
+  ///
+  /// # Arguments
+  ///
+  /// * `String` - The letter to add into the text
+  /// * `usize` - The amount of times to add the letter
+  /// * `usize` - The jump size
+  pub options: (String, usize, usize),
 }
 
 impl Encryptor for Add {
