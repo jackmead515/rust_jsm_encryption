@@ -1,3 +1,3 @@
 # JSM Encryption
 
-### A module, expandable, virtual uncrackable, and possibly unnessesary, text encryption algorithm.
+### A module, expandable, virtually uncrackable, and possibly unnessesary, text encryption algorithm.
