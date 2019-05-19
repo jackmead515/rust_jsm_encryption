@@ -1,4 +1,12 @@
+ #[allow(non_snake_case)]
+
 use std::env;
+use std::io;
+use std::time::{Duration, Instant};
+use std::thread::sleep;
+use std::io::BufReader;
+use std::io::BufRead;
+use std::fs::File;
 
 extern crate rand;
 
@@ -11,7 +19,26 @@ mod alphabet;
 //use crate::hasher::Hasher;
 
 mod rules;
-use crate::rules::{add, arrange};
+use crate::rules::{add, arrange, replace, reverse};
+
+fn vec_to_string(message: &Vec<String>) -> String {
+    return message.join("");
+}
+
+fn load_text(message: String) -> Vec<String> {
+    let mut vec: Vec<String> = message[..].split("")
+        .map(|s| s.to_string())
+        .filter(|s| !s.is_empty())
+        .collect();
+    
+    return vec;
+}
+
+fn user_data() -> String {
+    let mut message = String::new();
+    io::stdin().read_line(&mut message).expect("Failed to read user input.");
+    return message;
+}
 
 fn main() {
 
@@ -20,34 +47,47 @@ fn main() {
     let keys = alphabet::loadFromFile(&String::from("a.txt"));
     let key_string = keys.gen_string();
 
-    println!("Alphabet: {}", key_string);
+    println!("\nAlphabet: {}", key_string);
 
     let ruleBook = RuleBook::generateRuleBook(&keys);
 
     let addRule = ruleBook.rules.get(&add::id).unwrap();
     let arrRule = ruleBook.rules.get(&arrange::id).unwrap();
+    let repRule = ruleBook.rules.get(&replace::id).unwrap();
+    let revRule = ruleBook.rules.get(&reverse::id).unwrap();
 
-    let mut j: Vec<String> = "Jack Steven Mead".split("")
-        .map(|s| s.to_string())
-        .filter(|s| !s.is_empty())
-        .collect();
+    let mut j = load_text(user_data());
 
-    println!("{:?}", j);
-    j = addRule.encrypt(j);
-    println!("{:?}", j);
-    j = addRule.encrypt(j);
-    println!("{:?}", j);
-    j = arrRule.encrypt(j);
-    println!("{:?}", j);
-    j = arrRule.encrypt(j);
-    println!("{:?}", j);
+    println!("\nOriginal: {}\n", vec_to_string(&j));
 
-    j = arrRule.decrypt(j);
-    println!("{:?}", j);
-    j = arrRule.decrypt(j);
-    println!("{:?}", j);
-    j = addRule.decrypt(j);
-    println!("{:?}", j);
-    j = addRule.decrypt(j);
-    println!("{:?}", j);
+    let start_encrypt = Instant::now();
+    for i in 0..10 {
+        j = addRule.encrypt(j);
+        //println!("Add {}", vec_to_string(&j));
+        j = repRule.encrypt(j);
+        //println!("Rep {}", vec_to_string(&j));
+        j = arrRule.encrypt(j);
+        //println!("Arr {}", vec_to_string(&j));
+        j = revRule.encrypt(j);
+        //println!("Rev {}", vec_to_string(&j));
+    }
+    let encrypt_time = start_encrypt.elapsed().as_nanos() as f64;
+
+    println!("\n^^^ Final Decryption ^^^\n");
+
+    let start_decrypt = Instant::now();
+    for i in 0..10 {
+        j = revRule.decrypt(j);
+        //println!("Rev {}", vec_to_string(&j));
+        j = arrRule.decrypt(j);
+        //println!("Arr {}", vec_to_string(&j));
+        j = repRule.decrypt(j);
+        //println!("Rep {}", vec_to_string(&j));
+        j = addRule.decrypt(j);
+        //println!("Add {}", vec_to_string(&j));
+    }
+    let decrypt_time = start_decrypt.elapsed().as_nanos() as f64;
+
+    println!("Encyption Time: {} ms", encrypt_time/1000000.0);
+    println!("Decyption Time: {} ms", decrypt_time/1000000.0);
 }

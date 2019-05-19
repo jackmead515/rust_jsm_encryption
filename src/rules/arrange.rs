@@ -6,8 +6,8 @@ pub static id: usize = 1;
 
 /// Generates the options for the Arrange rule
 pub fn generate_options() -> (usize, usize) {
-  let rounds = rand::thread_rng().gen_range(0, 10);
-  let jump = rand::thread_rng().gen_range(0, 10);
+  let rounds = rand::thread_rng().gen_range(1, 10);
+  let jump = rand::thread_rng().gen_range(1, 10);
 
   return (rounds, jump);
 }
@@ -36,10 +36,11 @@ impl Encryptor for Arrange {
 
     for i in 0..amount {
       for x in 0..message.len() {
-        if x+jump < message.len() {
+        let cj = x+jump;
+        if cj < message.len() {
           let temp = message[x].clone();
-          message[x] = message[x+jump].clone();
-          message[x+jump] = temp;
+          message[x] = message[cj].clone();
+          message[cj] = temp;
         }
       }
     }
@@ -49,17 +50,23 @@ impl Encryptor for Arrange {
   
   fn decrypt(&self, mut message: Vec<String>) -> Vec<String> {
     let amount = self.options.0;
-    let jump = self.options.1;
+    let jump = self.options.1 as i32;
+
+    if jump >= message.len() as i32 {
+      return message;
+    }
 
     for i in 0..amount {
-      for x in message.len()-1..0 {
-        if x-jump < message.len() {
+      for x in (0..message.len()).rev() {
+        let cj: i32 = (x as i32)-jump;
+        if cj >= 0 {
           let temp = message[x].clone();
-          message[x] = message[x-jump].clone();
-          message[x-jump] = temp;
+          message[x] = message[cj as usize].clone();
+          message[cj as usize] = temp;
         }
       }
     }
+
     return message;
   }
 }

@@ -39,6 +39,7 @@ pub fn loadFromFile(file: &String) -> Alphabet {
           let l = line.unwrap();
           hs.insert(l);
     };
+    hs.insert(String::from(" "));
 
     return Alphabet {
         keys: hs

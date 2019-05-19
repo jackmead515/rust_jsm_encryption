@@ -1,6 +1,6 @@
 pub mod RuleBook {
   use std::collections::HashMap;
-  use crate::rules::{add, arrange};
+  use crate::rules::{add, arrange, replace, reverse};
   use crate::alphabet::Alphabet;
 
   pub trait Encryptor {
@@ -24,6 +24,8 @@ pub mod RuleBook {
 
     book.rules.insert(add::id, add::new(&key_vec));
     book.rules.insert(arrange::id, arrange::new());
+    book.rules.insert(replace::id, replace::new(&key_vec));
+    book.rules.insert(reverse::id, reverse::new());
 
     return book;
   }
