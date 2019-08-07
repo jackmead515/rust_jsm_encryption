@@ -21,12 +21,17 @@ impl Alphabet {
 
   /// Generates a new string from all the keys in the alphabet.
   pub fn gen_string(&self) -> String {
-    return self.keys.iter().map(|s| s.clone()).collect::<Vec<String>>().join("");
+    return self.keys.iter()
+      .cloned()
+      .collect::<Vec<String>>()
+      .join("");
   }
 
   /// Generates a new vector from all the keys in the alphabet.
   pub fn gen_vec(&self) -> Vec<String> {
-    return self.keys.iter().map(|s| s.clone()).collect::<Vec<String>>()
+    return self.keys.iter()
+      .cloned()
+      .collect::<Vec<String>>()
   }
 }
 

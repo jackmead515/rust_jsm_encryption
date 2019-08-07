@@ -16,8 +16,8 @@ pub fn generate_options(alphabet: &Vec<String>) -> (HashMap<String, String>, Has
   let mut opts2: HashMap<String, String> = HashMap::new();
   let mut rng1 = thread_rng();
   let mut rng2 = thread_rng();
-  let mut a1 = alphabet.clone();
-  let mut a2 = alphabet.clone();
+  let mut a1 = alphabet.to_owned();
+  let mut a2 = alphabet.to_owned();
 
   a1.shuffle(&mut rng1);
   a2.shuffle(&mut rng2);

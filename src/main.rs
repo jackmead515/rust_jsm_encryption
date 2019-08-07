@@ -1,4 +1,4 @@
- #[allow(non_snake_case)]
+ #![allow(non_snake_case)]
 
 use std::env;
 use std::io;
@@ -25,8 +25,9 @@ fn vec_to_string(message: &Vec<String>) -> String {
     return message.join("");
 }
 
-fn load_text(message: String) -> Vec<String> {
-    let mut vec: Vec<String> = message[..].split("")
+fn load_text(mut message: String) -> Vec<String> {
+    message.pop();
+    let mut vec: Vec<String> = message.split("")
         .map(|s| s.to_string())
         .filter(|s| !s.is_empty())
         .collect();
@@ -58,10 +59,10 @@ fn main() {
 
     let mut j = load_text(user_data());
 
-    println!("\nOriginal: {}\n", vec_to_string(&j));
+    println!("\nOriginal:\n{:?}\n", j);
 
     let start_encrypt = Instant::now();
-    for i in 0..10 {
+    for i in 0..50 {
         j = addRule.encrypt(j);
         //println!("Add {}", vec_to_string(&j));
         j = repRule.encrypt(j);
@@ -73,10 +74,10 @@ fn main() {
     }
     let encrypt_time = start_encrypt.elapsed().as_nanos() as f64;
 
-    println!("\n^^^ Final Decryption ^^^\n");
+    println!("Encrypted:\n{}\n", vec_to_string(&j));
 
     let start_decrypt = Instant::now();
-    for i in 0..10 {
+    for i in 0..50 {
         j = revRule.decrypt(j);
         //println!("Rev {}", vec_to_string(&j));
         j = arrRule.decrypt(j);
@@ -88,6 +89,7 @@ fn main() {
     }
     let decrypt_time = start_decrypt.elapsed().as_nanos() as f64;
 
-    println!("Encyption Time: {} ms", encrypt_time/1000000.0);
-    println!("Decyption Time: {} ms", decrypt_time/1000000.0);
+    println!("Decrypted:\n{}\n", vec_to_string(&j));
+    println!("Encryption Time: {} ms", encrypt_time/1_000_000.0);
+    println!("Decryption Time: {} ms", decrypt_time/1_000_000.0);
 }
